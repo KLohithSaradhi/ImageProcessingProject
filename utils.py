@@ -217,21 +217,11 @@ class RescaleTransform(object):
         return image.resize((int(image.size[0] * self.scale), int(image.size[1] * self.scale)))
 
 class HeyZee(Dataset):
-    def __init__(self, folder1_path, folder2_path,):
-        self.folder1_path = folder1_path
-        self.folder2_path = folder2_path
+    def __init__(self, path_pairs):
         self.scale_transform = RescaleTransform(scale=0.5)
-        self.file_paths = self._get_file_paths()
+        self.file_paths = path_pairs
         self.tensor_transform = ToTensor()
     
-
-    def _get_file_paths(self):
-        file_paths = []
-        folder1_files = os.listdir(self.folder1_path)
-        folder2_files = os.listdir(self.folder2_path)
-        for i in range(min(len(folder1_files), len(folder2_files))):
-            file_paths.append((os.path.join(self.folder1_path, folder1_files[i]), os.path.join(self.folder2_path, folder2_files[i])))
-        return file_paths
 
     def __len__(self):
         return len(self.file_paths)
@@ -260,8 +250,12 @@ class HeyZee(Dataset):
         O3 = self.tensor_transform(O3)
 
         return (I0, I1, I2, I3), (O0, O1, O2, O3)
-
-
-
-
     
+
+def get_file_paths(folder1_path, folder2_path):
+    file_paths = []
+    folder1_files = os.listdir(folder1_path)
+    folder2_files = os.listdir(folder2_path)
+    for i in range(min(len(folder1_files), len(folder2_files))):
+        file_paths.append((os.path.join(folder1_path, folder1_files[i]), os.path.join(folder2_path, folder2_files[i])))
+    return file_paths
