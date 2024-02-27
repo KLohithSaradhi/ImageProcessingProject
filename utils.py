@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch.nn.modules.loss import _Loss
 import torchvision
 
 
@@ -69,7 +70,7 @@ class DecodingBlock(nn.Module):
 
         return out
 
-class ReconstructionLoss(nn.modules.loss):
+class ReconstructionLoss(_Loss):
 
     def __init__(self):
         super(ReconstructionLoss, self).__init__()
@@ -82,7 +83,7 @@ class ReconstructionLoss(nn.modules.loss):
 
         return loss
     
-class VGGPerceptualLoss(torch.nn.Module):
+class VGGPerceptualLoss(nn.Module):
     def __init__(self, resize=True):
         super(VGGPerceptualLoss, self).__init__()
         blocks = []
@@ -124,12 +125,68 @@ class VGGPerceptualLoss(torch.nn.Module):
                 loss += torch.nn.functional.l1_loss(gram_x, gram_y)
         return loss
 
-class TotalLoss(nn.modules.loss):
-    def __init__(self):
+class SSIM(_Loss):
+    def __init__(self, K1 = 0.01, K2 = 0.01, K3 = 0.01, L = 2, alpha = 1, beta = 1, gamma = 1):
+        super(SSIM, self).__init__()
+
+        self.C1 = (K1 * L) ** 2
+        self.C2 = (K2 * L) ** 2
+        self.C3 = (K3 * L) ** 2
+
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = gamma
+
+    def forward(self, x, y):
+
+        mu_x = torch.mean(x)
+        mu_y = torch.mean(y)
+
+        l_xy = (2 * mu_x * mu_y + self.C1) / (mu_x ** 2 + mu_y ** 2 + self.C1)
+
+        sigma_x = torch.sqrt(torch.var(x))
+        sigma_y = torch.sqrt(torch.var(y))
+
+        c_xy = (2 * sigma_x * sigma_y + self.C2) / (sigma_x ** 2 + sigma_y ** 2 + self.C2)
+
+        cov = torch.mean((x - mu_x) * (y - mu_y))
+
+        s_xy = (cov + self.C3) / (sigma_x * sigma_y + self.C3)
+
+        ssim = l_xy ** self.alpha * c_xy ** self.beta * s_xy ** self.gamma
+
+        return ssim
+
+class LocalSSIM(_Loss):
+
+    def __init__(self, slice = -1):
+        super(LocalSSIM, self).__init__()
+
+        self.slice = slice
+
+    def forward(self, x, y):
+        pass        
+        
+class TotalLoss(_Loss):
+    def __init__(self, lambda1 = 0.1, lambda2 = 0.1):
         super(TotalLoss, self).__init__()
 
+        self.recon = ReconstructionLoss()
+        self.perceptual = VGGPerceptualLoss()
+        self.ssim = SSIM()
+
+        self.lambda1 = lambda1
+        self.lambda2 = lambda2
+    
+    def forward(self, groundTruths, outputs):
+
+        LOSS = 0
+
+        for scale in range(len(groundTruths)):
+            loss = self.recon(outputs[scale], groundTruths[scale])
+            loss += self.lambda1 * self.perceptual(outputs[scale], groundTruths[scale])
+            loss += self.lambda2 * self.ssim(outputs[scale], groundTruths[scale])
+
+            LOSS += loss * (1 / (2 ** scale))
         
-
-        
-
-
+        return LOSS
