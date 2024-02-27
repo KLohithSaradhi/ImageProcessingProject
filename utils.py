@@ -3,6 +3,10 @@ import torch.nn as nn
 from torch.nn.modules.loss import _Loss
 import torchvision
 
+from torch.utils.data import Dataset, DataLoader
+from torchvision.transforms import ToTensor
+from PIL import Image
+import os
 
 
 
@@ -204,3 +208,60 @@ class TotalLoss(_Loss):
             LOSS += loss * (1 / (2 ** scale))
         
         return LOSS
+    
+class RescaleTransform(object):
+    def __init__(self, scale):
+        self.scale = scale
+
+    def __call__(self, image):
+        return image.resize((int(image.size[0] * self.scale), int(image.size[1] * self.scale)))
+
+class HeyZee(Dataset):
+    def __init__(self, folder1_path, folder2_path,):
+        self.folder1_path = folder1_path
+        self.folder2_path = folder2_path
+        self.scale_transform = RescaleTransform(scale=0.5)
+        self.file_paths = self._get_file_paths()
+        self.tensor_transform = ToTensor()
+    
+
+    def _get_file_paths(self):
+        file_paths = []
+        folder1_files = os.listdir(self.folder1_path)
+        folder2_files = os.listdir(self.folder2_path)
+        for i in range(min(len(folder1_files), len(folder2_files))):
+            file_paths.append((os.path.join(self.folder1_path, folder1_files[i]), os.path.join(self.folder2_path, folder2_files[i])))
+        return file_paths
+
+    def __len__(self):
+        return len(self.file_paths)
+
+    def __getitem__(self, idx):
+        file_path1, file_path2 = self.file_paths[idx]
+        I0 = Image.open(file_path1)
+        O0 = Image.open(file_path2)
+
+        I1 = self.scale_transform(I0)
+        I2 = self.scale_transform(I1)
+        I3 = self.scale_transform(I2)
+
+        O1 = self.scale_transform(O0)
+        O2 = self.scale_transform(O1)
+        O3 = self.scale_transform(O2)
+
+        I0 = self.tensor_transform(I0)
+        I1 = self.tensor_transform(I1)
+        I2 = self.tensor_transform(I2)
+        I3 = self.tensor_transform(I3)
+
+        O0 = self.tensor_transform(O0)
+        O1 = self.tensor_transform(O1)
+        O2 = self.tensor_transform(O2)
+        O3 = self.tensor_transform(O3)
+
+        return (I0, I1, I2, I3), (O0, O1, O2, O3)
+
+
+
+
+    
