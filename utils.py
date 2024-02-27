@@ -158,14 +158,28 @@ class SSIM(_Loss):
         return ssim
 
 class LocalSSIM(_Loss):
-
     def __init__(self, slice = -1):
         super(LocalSSIM, self).__init__()
 
+        self.SSIMLoss = SSIM()
         self.slice = slice
 
     def forward(self, x, y):
-        pass        
+        x_chunks = x.shape[2] // self.slice
+        y_chunks = x.shape[3] // self.slice    
+
+        SSIM = 0
+
+        for i in range(x_chunks - 1):
+            for j in range(y_chunks - 1):
+                x_chunk = x[:, :, i * self.slice : (i + 1) * self.slice, j * self.slice : (j + 1) * self.slice]
+                y_chunk = y[:, :, i * self.slice : (i + 1) * self.slice, j * self.slice : (j + 1) * self.slice]
+
+                SSIM += self.SSIMLoss(x_chunk, y_chunk)
+
+        SSIM = SSIM / (x_chunks * y_chunks)
+
+        return SSIM   
         
 class TotalLoss(_Loss):
     def __init__(self, lambda1 = 0.1, lambda2 = 0.1):
@@ -173,7 +187,7 @@ class TotalLoss(_Loss):
 
         self.recon = ReconstructionLoss()
         self.perceptual = VGGPerceptualLoss()
-        self.ssim = SSIM()
+        self.ssim = LocalSSIM(slice = 4)
 
         self.lambda1 = lambda1
         self.lambda2 = lambda2
