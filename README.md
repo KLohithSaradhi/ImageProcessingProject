@@ -18,9 +18,11 @@ Perceptually viable de-hazed images preferably requiring lower computation
 
 Paired images of Hazed and De-hazed images as shown below
 
-![Untitled](Assets/Untitled.jpeg)
 
-![Untitled](Assets/Untitled%201.jpeg)
+<div style="display:flex; gap: 100px;">
+    <img src="Assets/Untitled.jpeg" alt="Untitled" width="200">
+    <img src="Assets/Untitled%201.jpeg" alt="Untitled 1" width="200">
+</div>
 
 - Only 40 such image pairs are available
 - Can use other datasets such as [IHAZE](https://data.vision.ee.ethz.ch/cvl/ntire18//i-haze/), [OHAZE](https://data.vision.ee.ethz.ch/cvl/ntire18//o-haze/), [DHAZE](https://data.vision.ee.ethz.ch/cvl/ntire19/dense-haze/) (score deduction is applied when using other data)
@@ -31,11 +33,36 @@ Paired images of Hazed and De-hazed images as shown below
 
 - Went through [NTIRE 2023 HR Dehazing Challenge Report](https://openaccess.thecvf.com/content/CVPR2023W/NTIRE/papers/Ancuti_NTIRE_2023_HR_NonHomogeneous_Dehazing_Challenge_Report_CVPRW_2023_paper.pdf)
 
-| Research Article | Dataset and Variables used | Download data URL | Solution Approach | Interesting Insights |
-| --- | --- | --- | --- | --- |
-| https://openaccess.thecvf.com/content/CVPR2023W/NTIRE/papers/Zhou_Breaking_Through_the_Haze_An_Advanced_Non-Homogeneous_Dehazing_Method_Based_CVPRW_2023_paper.pdf |  |  | DWT-FFC + ConvNeXt prior knowledge network | FFCs are epic, they allow models to learn global and local features separately and use them varyingly with depth in networks |
-| https://openaccess.thecvf.com/content/CVPR2023W/NTIRE/papers/Liu_A_Data-Centric_Solution_to_NonHomogeneous_Dehazing_via_Vision_Transformer_CVPRW_2023_paper.pdf |  |  |  | Converts all the images to the distribution of current year dataset. |
-| https://openaccess.thecvf.com/content/CVPR2021W/NTIRE/papers/Jo_Multi-Scale_Selective_Residual_Learning_for_Non-Homogeneous_Dehazing_CVPRW_2021_paper.pdf |  |  |  | Simple multi scale Resnet type arch |
+<table>
+    <tr>
+        <th>Research Article</th>
+        <th>Dataset and Variables used</th>
+        <th>Download data URL</th>
+        <th>Solution Approach</th>
+        <th>Interesting Insights</th>
+    </tr>
+    <tr>
+        <td><a href="https://openaccess.thecvf.com/content/CVPR2023W/NTIRE/papers/Zhou_Breaking_Through_the_Haze_An_Advanced_Non-Homogeneous_Dehazing_Method_Based_CVPRW_2023_paper.pdf">DWT-FFC</a></td>
+        <td></td>
+        <td></td>
+        <td>DWT-FFC + ConvNeXt prior knowledge network</td>
+        <td>FFCs are epic, they allow models to learn global and local features separately and use them varyingly with depth in networks</td>
+    </tr>
+    <tr>
+        <td><a href="https://openaccess.thecvf.com/content/CVPR2023W/NTIRE/papers/Liu_A_Data-Centric_Solution_to_NonHomogeneous_Dehazing_via_Vision_Transformer_CVPRW_2023_paper.pdf">ITB_Dehaze</a></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Converts all the images to the distribution of current year dataset.</td>
+    </tr>
+    <tr>
+        <td><a href="https://openaccess.thecvf.com/content/CVPR2021W/NTIRE/papers/Jo_Multi-Scale_Selective_Residual_Learning_for_Non-Homogeneous_Dehazing_CVPRW_2021_paper.pdf">[Mask]]</a></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Simple multi scale Resnet type arch</td>
+    </tr>
+</table>
 
 ### Work Done
 
