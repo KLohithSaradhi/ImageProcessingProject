@@ -262,3 +262,28 @@ def get_file_paths(folder1_path, folder2_path):
     for i in range(min(len(folder1_files), len(folder2_files))):
         file_paths.append((os.path.join(folder1_path, folder1_files[i]), os.path.join(folder2_path, folder2_files[i])))
     return file_paths
+
+class HeyZeeTest(Dataset):
+    def __init__(self, paths):
+        self.scale_transform = RescaleTransform(scale=0.5)
+        self.file_paths = paths
+        self.tensor_transform = ToTensor()
+
+    def __len__(self):
+        return len(self.file_paths)
+
+    def __getitem__(self, idx):
+        file_path = self.file_paths[idx]
+        I0 = Image.open(file_path)
+
+        I1 = self.scale_transform(I0)
+        I2 = self.scale_transform(I1)
+        I3 = self.scale_transform(I2)
+
+
+        I0 = self.tensor_transform(I0)
+        I1 = self.tensor_transform(I1)
+        I2 = self.tensor_transform(I2)
+        I3 = self.tensor_transform(I3)
+
+        return file_path, (I0, I1, I2, I3)
