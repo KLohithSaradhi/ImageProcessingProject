@@ -1,50 +1,38 @@
-import model
+import os
 import utils
-import argparse
-
-
-import torch
+import model
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 
+import torch
+
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
+path = "/Data"
+path_pairs = utils.get_file_paths("./AugmentedData/hazy", "./AugmentedData/clear")
+
+
 from sklearn.model_selection import train_test_split
-
-
-
-parser = argparse.ArgumentParser(prog="train.py", description="Train a model")
-parser.add_argument("--data", type=str, help="Path to the data")
-parser.add_argument("--model", type=str, default=None, help="Path to the model")
-parser.add_argument("--epochs", type=int, default=1, help="Number of epochs")
-parser.add_argument("--batch_size", type=int, default=4, help="Batch size")
-parser.add_argument("--lr", type=float, default=0.0001, help="Learning rate")
-parser.add_argument("--b1", type=float, default=0.5, help="beta 1")
-parser.add_argument("--b2", type=float, default=0.999, help="beta 2")
-parser.add_argument("--weight_decay", type=float, default=1e-4, help="weight decay")
-
-args = parser.parse_args()
-
-
-path_pairs = utils.get_file_paths(args.data + "hazy", args.data + "clear")
-
 
 train_pairs, test_pairs = train_test_split(path_pairs, test_size=0.2, random_state=42)
 
 train_dataset = utils.HeyZee(train_pairs)
 test_dataset = utils.HeyZee(test_pairs)
 
+BATCH_SIZE = 1
 
-train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=True)
-
+train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
 TheHayZee = model.MASK()
 
 TheHayZee = TheHayZee.cuda()
 
 loss = utils.TotalLoss()
-optim = Adam(TheHayZee.parameters(), lr=args.lr, betas = (args.b1, args.b2), weight_decay=args.weight_decay)
+optim = Adam(TheHayZee.parameters(), lr=5e-4, betas = (0.5, 0.999), weight_decay=0.0001)
+epochs = 35
 
-
-for e in range(args.epochs):
+for e in range(epochs):
 
     for i, (haze, clear) in enumerate(train_loader):
 
@@ -71,4 +59,4 @@ for e in range(args.epochs):
 
         print(f"Epoch {e} Iteration {i} Loss {loss_val.item()}")
 
-    torch.save(TheHayZee.state_dict(), f"./model_{e}.pth")
+    torch.save(TheHayZee.state_dict(), f"./weights/model_{e}.pth")
