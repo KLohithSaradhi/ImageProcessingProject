@@ -38,9 +38,9 @@ Achintya Lakshmanan
 
 - Run <i>train.py</i>
 
-## Output
+## For Inference and processed Output
 
-### Inference
+#### Inference
 
 - Create a folder with the following structure
 
@@ -54,9 +54,9 @@ Achintya Lakshmanan
 
 - Run the <i>submission.ipynb</i> file.
 
-### Post processing
+#### Post processing
 
-- Create 2 output folder in <i>Submission</i> as:
+- Create an output folder in <i>Submission</i> as:
 
 >Submission
 >>\<folder name><br>
