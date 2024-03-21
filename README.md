@@ -12,16 +12,19 @@ Achintya Lakshmanan
 
 ## Data Folder structure
 
-- Data
-- - clear
-- - hazy
+├── Data
+│   ├── clear
+│   ├── hazy
+
+
+
 
 ## To Augment the data
 
 - Create a folder with the following structure
 
-- Augmented Data
-- - clear
+├──Augmented Data
+|  ├──clear
 - - hazy
 
 - Run augmentation.ipynb with the appropriate paths for src and target paths.
