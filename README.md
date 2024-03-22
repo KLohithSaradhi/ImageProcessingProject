@@ -10,6 +10,19 @@ Kandukuri Lohith Saradhi
 
 Achintya Lakshmanan
 
+## Requirements
+- Numpy 1.24.3
+- OpenCV-Python 4.9.0.80
+- Pillow (PIL) 10.2.0
+- Pytorch 2.2.1
+- Pytorch-cuda 12.1 (if running on GPU)
+- Scikit-Image 0.21.0
+- Scikit-Lean 1.3.0
+- TQDM 4.65.0
+
+## Model Weights and Results
+[Google Drive](https://drive.google.com/drive/folders/1WE39pOm_FTal7C25mY4AKwt8Il9TkUXb?usp=sharing)
+
 ## Data Folder structure
 
 >Data
